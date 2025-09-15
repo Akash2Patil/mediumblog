@@ -12,11 +12,12 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  directUrl = "postgresql://neondb_owner:npg_4QrDVyqu8EkI@ep-autumn-darkness-a76a6leo-pooler.ap-southeast-2.aws.neon.tech/mediumblog?sslmode=require&channel_binding=require" 
 }
 
 model User {
   id  String @id @default(uuid())
-  email String
+  email String @unique
   name String?
   password String
   post Post[] 
