@@ -3,6 +3,7 @@ import { PrismaClient } from "../generated/prisma/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import { verify } from 'hono/jwt';
 
+//typescript
 export const blogRouter = new Hono<{
     Bindings: {
         DATABASE_URL: string,
@@ -17,18 +18,18 @@ export const blogRouter = new Hono<{
 
 //middleware
 blogRouter.use('/*', async (c, next) => {
-    // get headers
-    // verify the header
-    // if the header is correct we can proceed
-    // if not, we return the user 403 status code
+    // 1) get headers
     const authheader = c.req.header("authorization") || "";
+    // 2) verify the header
     //@ts-ignore
     const user = await verify(authheader, c.env.JWT_SECRET)
+    // 3) if the header is correct we can proceed
     if (user) {
         //@ts-ignore
         c.set("userId", user.id)
         await next()
     }
+    // 4) if not, we return the user 403 status code
     else {
         c.status(403)
         return c.json({ error: "unauthorized" })
@@ -36,7 +37,7 @@ blogRouter.use('/*', async (c, next) => {
 })
 
 // endpoints
-blogRouter.post('/', async (c) => {
+blogRouter.post('/create', async (c) => {
     const authorId = c.get("userId")
     const prisma = new PrismaClient({
         datasourceUrl: c.env.DATABASE_URL,
@@ -61,8 +62,8 @@ catch(error){
     c.text("Blog is not created")
 }
 })
-
-blogRouter.put('/', async(c) => {
+// update endpoint
+blogRouter.put('/update', async(c) => {
     const prisma = new PrismaClient({
         datasourceUrl: c.env.DATABASE_URL,
     }).$extends(withAccelerate());
@@ -87,7 +88,18 @@ blogRouter.put('/', async(c) => {
 }
 
 })
+// todo add pagination // get all blog
+blogRouter.get('/bulk', async(c) => {
+     const prisma = new PrismaClient({
+        datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate());  
+    const blogs = await prisma.post.findMany()
+    return c.json({
+        blogs
+    })
+})
 
+// get blog using Id
 blogRouter.get('/:id', async(c) => {
     const prisma = new PrismaClient({
         datasourceUrl: c.env.DATABASE_URL,
@@ -101,15 +113,5 @@ blogRouter.get('/:id', async(c) => {
     })
     return c.json({
         blog
-    })
-})
-// todo add pagination
-blogRouter.get('/bulk', async(c) => {
-     const prisma = new PrismaClient({
-        datasourceUrl: c.env.DATABASE_URL,
-    }).$extends(withAccelerate());  
-    const blogs = await prisma.post.findMany()
-    return c.json({
-        blogs
     })
 })
