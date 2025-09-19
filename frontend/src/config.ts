@@ -1,0 +1,1 @@
+export const BACKEND_URL = "https://backend.akashpatil1321999.workers.dev"  
