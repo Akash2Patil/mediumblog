@@ -13,9 +13,9 @@ const Auth = ({type}: {type:"signup" | "signin"}) => {
      async function sendRequest(){
         try{
             const response = await axios.post(`${BACKEND_URL}/api/v1/user/${type === "signup" ? "signup" : "signin"}`, postInputs)
-            const jwt = response.data;
+            const jwt = response.data.jwt;
             localStorage.setItem("token",jwt);
-            navigate("/blog")
+            navigate("/blogs")
         }
         catch{
             alert("something worng with inputs")
@@ -28,6 +28,12 @@ const Auth = ({type}: {type:"signup" | "signin"}) => {
             <Link to={type === "signup" ?'/signin' : '/signup'} className="underline">{type === "signup" ? "Signin" : "Signup"}</Link></h2>
 
             <div className="w-[45%]">
+            {type === "signup" ? <LableInput lable="name" placeholder="Jhon doe" onChange={(e)=>{
+                setPostInputs(c=>({
+                    ...c,
+                    name: e.target.value,
+                }))
+            }}/> : null}
             <LableInput lable="email" placeholder="email@gmail.com" onChange={(e)=>{
                 setPostInputs(c=>({
                     ...c,
