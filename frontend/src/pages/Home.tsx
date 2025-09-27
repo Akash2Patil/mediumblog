@@ -5,7 +5,7 @@ const Home = () => {
   return (
     <>
       <Navbar />
-      <div className='w-full h-[90vh] flex justify-between items-center'>
+      <div className='w-full h-[82vh] flex justify-between items-center'>
       <div className='flex flex-col gap-5 pl-[5em]'>
         <h2 className='text-8xl font-bold'>Human stories & ideas</h2>
         <p className='text-xl font-normal'>A place to read, write, and deepen your understanding</p>
@@ -14,6 +14,9 @@ const Home = () => {
       <div className='p-3 h-full'>
         <img className='w-full h-full' src="/images/homebanner.webp" alt="" />
       </div>
+      </div>
+      <div className='border-t-1 p-3 text-center'>
+        Made by AkashPatil
       </div>
     </>
   )
