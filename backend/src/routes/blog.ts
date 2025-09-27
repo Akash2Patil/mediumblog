@@ -157,3 +157,41 @@ blogRouter.get('/:id', async (c) => {
         blog
     })
 })
+
+// delete endpoint
+blogRouter.delete('/delete/:id', async (c) => {
+    const blogId = c.req.param("id");
+    const userId = c.get("userId");  // 👈 JWT se mila hua user id
+
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate());
+
+    try {
+        // check if blog exists and belongs to user
+        const blog = await prisma.post.findUnique({
+            where: { id: blogId }
+        });
+
+        if (!blog) {
+            c.status(404);
+            return c.json({ message: "Blog not found" });
+        }
+
+        if (blog.authorId !== userId) {
+            c.status(403);
+            return c.json({ message: "You are not authorized to delete this blog" });
+        }
+
+        // delete blog
+        await prisma.post.delete({
+            where: { id: blogId }
+        });
+
+        return c.json({ message: "Blog deleted successfully" });
+    } catch (e) {
+        // console.error(e);
+        c.status(500);
+        return c.json({ message: "Error deleting blog" });
+    }
+});
